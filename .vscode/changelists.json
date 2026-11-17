@@ -1,0 +1,40 @@
+{
+  "changelists": [
+    {
+      "name": "Default",
+      "files": [
+        "streaming-chatbot/app.py",
+        "chatbot-frontend/.gitignore",
+        "chatbot-frontend/.oxlintrc.json",
+        "chatbot-frontend/README.md",
+        "chatbot-frontend/index.html",
+        "chatbot-frontend/package-lock.json",
+        "chatbot-frontend/package.json",
+        "chatbot-frontend/public/favicon.svg",
+        "chatbot-frontend/public/icons.svg",
+        "chatbot-frontend/src/App.css",
+        "chatbot-frontend/src/App.tsx",
+        "chatbot-frontend/src/assets/hero.png",
+        "chatbot-frontend/src/assets/react.svg",
+        "chatbot-frontend/src/assets/vite.svg",
+        "chatbot-frontend/src/index.css",
+        "chatbot-frontend/src/main.tsx",
+        "chatbot-frontend/tsconfig.app.json",
+        "chatbot-frontend/tsconfig.json",
+        "chatbot-frontend/tsconfig.node.json",
+        "chatbot-frontend/vite.config.ts",
+        ".vscode/changelists.json",
+        "chatbot-frontend/src/api/chat.ts",
+        "streaming-chatbot/main.py",
+        "chatbot-frontend/.env.example",
+        "chatbot-frontend/src/components/ChatComposer.tsx",
+        "chatbot-frontend/src/components/ChatHeader.tsx",
+        "chatbot-frontend/src/components/EmptyState.tsx",
+        "chatbot-frontend/src/components/MessageBubble.tsx",
+        "chatbot-frontend/src/components/MessageList.tsx",
+        "chatbot-frontend/src/hooks/useChat.ts"
+      ]
+    }
+  ],
+  "active": "Default"
+}
