@@ -5,9 +5,16 @@ export type ChatMessage = {
   content: string;
 };
 
+/** Token counts reported by the backend once a reply completes. */
+export type TokenUsage = {
+  input_tokens: number;
+  output_tokens: number;
+  total_tokens: number;
+};
+
 type StreamEvent =
   | { type: "delta"; text: string }
-  | { type: "done" }
+  | { type: "done"; usage: TokenUsage | null }
   | { type: "error"; message: string };
 
 type StreamOptions = {
@@ -44,14 +51,15 @@ function parseEvent(block: string): StreamEvent | null {
 
 /**
  * Sends a message and streams the assistant reply.
- * Resolves once the server signals completion; rejects on errors or abort.
+ * Resolves with the token usage once the server signals completion;
+ * rejects on errors or abort.
  */
 export async function streamChat({
   message,
   history,
   onDelta,
   signal,
-}: StreamOptions): Promise<void> {
+}: StreamOptions): Promise<TokenUsage | null> {
   const response = await fetch(`${API_URL}/chat/stream`, {
     method: "POST",
     headers: {
@@ -79,6 +87,7 @@ export async function streamChat({
   // Network chunks don't align with SSE events, so keep the unparsed tail.
   let buffer = "";
   let completed = false;
+  let usage: TokenUsage | null = null;
 
   try {
     while (!completed) {
@@ -99,6 +108,7 @@ export async function streamChat({
         } else if (event.type === "error") {
           throw new ChatApiError(event.message);
         } else {
+          usage = event.usage;
           completed = true;
           break;
         }
@@ -111,4 +121,6 @@ export async function streamChat({
   if (!completed) {
     throw new ChatApiError("The response ended unexpectedly.");
   }
+
+  return usage;
 }
