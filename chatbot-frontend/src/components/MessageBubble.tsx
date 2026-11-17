@@ -30,12 +30,26 @@ export function MessageBubble({ message }: MessageBubbleProps) {
         AI
       </div>
       <div className="message-body">
-        {message.content ? (
+        {message.content && (
           <div className="markdown">
             <Markdown>{message.content}</Markdown>
           </div>
-        ) : (
-          <TypingIndicator />
+        )}
+
+        {!message.content && !message.stopped && <TypingIndicator />}
+
+        {message.stopped && (
+          <p className="stopped-note" role="status">
+            <span className="stopped-dot" aria-hidden="true" />
+            Generation stopped
+          </p>
+        )}
+
+        {message.usage && (
+          <p className="usage">
+            {message.usage.input_tokens} in · {message.usage.output_tokens} out
+            · {message.usage.total_tokens} total tokens
+          </p>
         )}
       </div>
     </div>
