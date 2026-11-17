@@ -1,7 +1,8 @@
 
-from importlib import import_module
+from dotenv import load_dotenv
+from openai import OpenAI
 
-OpenAI = import_module("openai").OpenAI
+load_dotenv() 
 
 client = OpenAI()
 
