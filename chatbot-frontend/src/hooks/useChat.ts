@@ -1,7 +1,21 @@
 import { useCallback, useEffect, useRef, useState } from "react";
-import { ChatApiError, streamChat, type ChatMessage } from "../api/chat";
+import {
+  ChatApiError,
+  streamChat,
+  type ChatMessage,
+  type TokenUsage,
+} from "../api/chat";
 
-export type Message = ChatMessage & { id: string };
+export type Message = ChatMessage & {
+  id: string;
+  usage?: TokenUsage | null;
+  stopped?: boolean;
+};
+
+type CommitOptions = {
+  usage?: TokenUsage | null;
+  stopped?: boolean;
+};
 
 type PendingTurn = {
   userText: string;
@@ -32,11 +46,17 @@ export function useChat() {
         .slice(-MAX_HISTORY_MESSAGES)
         .map(({ role, content }) => ({ role, content }));
 
-      const commitTurn = (reply: string) => {
+      const commitTurn = (reply: string, options: CommitOptions = {}) => {
         setHistory((prev) => [
           ...prev,
           { id: crypto.randomUUID(), role: "user", content: message },
-          { id: crypto.randomUUID(), role: "assistant", content: reply },
+          {
+            id: crypto.randomUUID(),
+            role: "assistant",
+            content: reply,
+            usage: options.usage ?? null,
+            stopped: options.stopped ?? false,
+          },
         ]);
       };
 
@@ -45,7 +65,7 @@ export function useChat() {
       setPending({ userText: message, reply });
 
       try {
-        await streamChat({
+        const usage = await streamChat({
           message,
           history: apiHistory,
           signal: controller.signal,
@@ -55,11 +75,12 @@ export function useChat() {
           },
         });
 
-        commitTurn(reply);
+        commitTurn(reply, { usage });
       } catch (err) {
         if (controller.signal.aborted) {
-          // Keep whatever the user already saw when they pressed stop.
-          if (reply) commitTurn(reply);
+          // Keep the partial reply and mark it, so the user knows it's incomplete.
+          // The user's message is kept even if no text had arrived yet.
+          commitTurn(reply, { stopped: true });
         } else {
           setError(err instanceof ChatApiError ? err.message : GENERIC_ERROR);
         }
