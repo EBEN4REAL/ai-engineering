@@ -3,13 +3,14 @@ import json
 import logging
 import os
 from collections.abc import AsyncIterator
-from typing import Literal
+from typing import Literal, Optional
 
 from dotenv import load_dotenv
 from fastapi import FastAPI, HTTPException, Request
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import StreamingResponse
 from openai import AsyncOpenAI, OpenAIError
+from openai.types.responses import ResponseUsage
 from pydantic import BaseModel, Field
 
 load_dotenv()
@@ -61,8 +62,26 @@ class ChatRequest(BaseModel):
     history: list[ChatMessage] = Field(default_factory=list)
 
 
+class TokenUsage(BaseModel):
+    input_tokens: int
+    output_tokens: int
+    total_tokens: int
+
+
 class ChatResponse(BaseModel):
     reply: str
+    usage: Optional[TokenUsage] = None
+
+
+def to_token_usage(usage: Optional[ResponseUsage]) -> Optional[TokenUsage]:
+    if usage is None:
+        return None
+
+    return TokenUsage(
+        input_tokens=usage.input_tokens,
+        output_tokens=usage.output_tokens,
+        total_tokens=usage.total_tokens,
+    )
 
 
 def build_model_input(payload: ChatRequest) -> list[dict[str, str]]:
@@ -73,7 +92,7 @@ def build_model_input(payload: ChatRequest) -> list[dict[str, str]]:
     return [*recent_history, {"role": "user", "content": payload.message}]
 
 
-def format_sse(payload: dict[str, str]) -> str:
+def format_sse(payload: dict[str, object]) -> str:
     return f"data: {json.dumps(payload)}\n\n"
 
 
@@ -102,7 +121,13 @@ async def stream_events(
                     yield format_sse({"type": "delta", "text": event.delta})
 
                 elif event.type == "response.completed":
-                    yield format_sse({"type": "done"})
+                    usage = to_token_usage(event.response.usage)
+                    yield format_sse(
+                        {
+                            "type": "done",
+                            "usage": usage.model_dump() if usage else None,
+                        }
+                    )
                     return
 
                 elif event.type == "response.failed":
@@ -161,7 +186,10 @@ async def chat(payload: ChatRequest) -> ChatResponse:
             detail="AI service is temporarily unavailable.",
         )
 
-    return ChatResponse(reply=response.output_text)
+    return ChatResponse(
+        reply=response.output_text,
+        usage=to_token_usage(response.usage),
+    )
 
 
 @app.get("/health")
