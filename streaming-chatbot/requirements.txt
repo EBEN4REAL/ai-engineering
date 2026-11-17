@@ -1,2 +1,3 @@
+fastapi[standard]==0.128.8
 openai==2.48.0
 python-dotenv==1.2.1
