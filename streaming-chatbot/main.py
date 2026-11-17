@@ -1,39 +1,32 @@
-
 import os
 
+from dotenv import load_dotenv
 from openai import OpenAI, OpenAIError
 
-client = OpenAI()
+load_dotenv()
 
 MODEL = os.getenv("OPENAI_MODEL", "gpt-4.1-mini")
+MAX_HISTORY_MESSAGES = 12
 
 SYSTEM_INSTRUCTIONS = """
 You are a helpful AI assistant.
 
 Be accurate, clear, and concise.
-specialise in explaining software engineering and AI concepts.
+Specialise in explaining software engineering and AI concepts.
 If you don't know something, acknowledge the uncertainty.
 """
 
-MAX_HISTORY_MESSAGES = 12
+EXIT_COMMANDS = {"/exit", "exit", "quit"}
+CLEAR_COMMANDS = {"/clear", "/reset"}
 
-conversation_history = []
+client = OpenAI()
+
+Message = dict[str, str]
 
 
-def chat(prompt: str) -> None:
-    global conversation_history
-
-    # Keep the most recent conversation turns.
-    recent_history = conversation_history[-MAX_HISTORY_MESSAGES:]
-
-    # Build the input without modifying saved history yet.
-    messages = [
-        *recent_history,
-        {"role": "user", "content": prompt},
-    ]
-
-    response_text = ""
-    completed = False
+def stream_reply(messages: list[Message]) -> str | None:
+    """Print the streamed reply and return it, or None if the request failed."""
+    parts: list[str] = []
 
     try:
         stream = client.responses.create(
@@ -46,36 +39,33 @@ def chat(prompt: str) -> None:
         for event in stream:
             if event.type == "response.output_text.delta":
                 print(event.delta, end="", flush=True)
-                response_text += event.delta
+                parts.append(event.delta)
 
             elif event.type == "response.completed":
-                completed = True
+                print()
+                return "".join(parts)
 
             elif event.type == "response.failed":
                 raise RuntimeError("The model response failed.")
 
-        print()
-
-        if not completed:
-            print("The response ended unexpectedly.")
-            return
-
-        # Save both messages only after successful completion.
-        conversation_history = [
-            *recent_history,
-            {"role": "user", "content": prompt},
-            {"role": "assistant", "content": response_text},
-        ]
-
     except (OpenAIError, RuntimeError) as error:
         print(f"\nRequest failed: {error}")
+        return None
+
+    print("\nThe response ended unexpectedly.")
+    return None
+
+
+def print_history(history: list[Message]) -> None:
+    for message in history:
+        print(f"{message['role']}: {message['content']}")
 
 
 def main() -> None:
-    global conversation_history
+    history: list[Message] = []
 
     print("AI Streaming Chatbot")
-    print("Commands: /clear, /history, /exit, /reset")
+    print("Commands: /clear, /history, /exit")
 
     while True:
         prompt = input("\nYou: ").strip()
@@ -83,26 +73,32 @@ def main() -> None:
         if not prompt:
             continue
 
-        if prompt.lower() in {"/exit", "exit", "quit"}:
+        command = prompt.lower()
+
+        if command in EXIT_COMMANDS:
             print("Goodbye!")
             break
 
-        if prompt.lower() == "/clear" or prompt.lower() == "/reset":
-            conversation_history = []
+        if command in CLEAR_COMMANDS:
+            history.clear()
             print("Conversation history cleared.")
             continue
 
-        if prompt.lower() == "/history":
-            for message in conversation_history:
-                print(
-                    f"{message['role']}: "
-                    f"{message['content']}"
-                )
+        if command == "/history":
+            print_history(history)
             continue
 
+        recent_history = history[-MAX_HISTORY_MESSAGES:]
+        messages = [*recent_history, {"role": "user", "content": prompt}]
+
         print("\nAI: ", end="", flush=True)
-        chat(prompt)
+        reply = stream_reply(messages)
+
+        # Save the turn only after a complete reply.
+        if reply is not None:
+            history.append({"role": "user", "content": prompt})
+            history.append({"role": "assistant", "content": reply})
 
 
-if __name__ == "__main__": # if the main.py file is being run directly (not imported as a module), then execute the main function
+if __name__ == "__main__":
     main()
