@@ -1,0 +1,86 @@
+/* Design tokens and global base styles. Component styles live in App.css. */
+
+:root {
+  --font-sans: "Inter", system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+
+  --bg: #f7f7f8;
+  --surface: #ffffff;
+  --surface-muted: #f0f0f3;
+  --border: #e4e4e7;
+  --text: #18181b;
+  --text-muted: #6b7280;
+
+  --accent: #6366f1;
+  --accent-strong: #4f46e5;
+  --accent-text: #ffffff;
+
+  --danger-bg: #fef2f2;
+  --danger-border: #fecaca;
+  --danger-text: #b91c1c;
+
+  --radius-sm: 10px;
+  --radius-md: 14px;
+  --radius-lg: 22px;
+  --shadow-float: 0 8px 28px rgb(0 0 0 / 0.08);
+
+  color-scheme: light dark;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --bg: #0c0c10;
+    --surface: #16161d;
+    --surface-muted: #1f1f28;
+    --border: #2a2a35;
+    --text: #f4f4f5;
+    --text-muted: #9ca3af;
+
+    --accent: #818cf8;
+    --accent-strong: #6366f1;
+
+    --danger-bg: #2a1214;
+    --danger-border: #7f1d1d;
+    --danger-text: #fca5a5;
+
+    --shadow-float: 0 8px 28px rgb(0 0 0 / 0.4);
+  }
+}
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+html,
+body,
+#root {
+  height: 100%;
+}
+
+body {
+  margin: 0;
+  font-family: var(--font-sans);
+  font-size: 16px;
+  line-height: 1.6;
+  color: var(--text);
+  background: var(--bg);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+button,
+textarea {
+  font: inherit;
+}
+
+:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 2px;
+}
+
+h1,
+h2,
+p {
+  margin: 0;
+}
