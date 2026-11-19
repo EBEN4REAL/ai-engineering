@@ -3,7 +3,7 @@
     {
       "name": "Default",
       "files": [
-        "transformer-fundamentals/multi_head_attention.py",
+        "transformer-fundamentals/transformer_block.py",
         ".vscode/changelists.json"
       ]
     }
