@@ -3,8 +3,10 @@
     {
       "name": "Default",
       "files": [
-        "bpe-tokenizer/main.py",
-        ".vscode/changelists.json"
+        "transformer-fundamentals/requirements.txt",
+        ".vscode/changelists.json",
+        "transformer-fundamentals/embeddings.py",
+        "transformer-fundamentals/attention.py"
       ]
     }
   ],
