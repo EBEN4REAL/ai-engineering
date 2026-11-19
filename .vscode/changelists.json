@@ -3,10 +3,8 @@
     {
       "name": "Default",
       "files": [
-        "transformer-fundamentals/requirements.txt",
-        ".vscode/changelists.json",
-        "transformer-fundamentals/embeddings.py",
-        "transformer-fundamentals/attention.py"
+        "transformer-fundamentals/multi_head_attention.py",
+        ".vscode/changelists.json"
       ]
     }
   ],
