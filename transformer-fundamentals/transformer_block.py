@@ -4,6 +4,10 @@ import numpy as np
 from multi_head_attention import multi_head_attention
 
 # 1e-5 means 0.00001. It prevents division by zero when the variance is zero and improves numerical stability.
+'''
+LayerNorm rescales each token's vector so its numbers have mean 0 
+and standard deviation 1. From the demo, with a 4-number token:
+'''
 def layer_norm(x, epsilon=1e-5):
     mean = np.mean(x, axis=-1, keepdims=True)
     variance = np.var(x, axis=-1, keepdims=True) # Variance measures how spread out the numbers are around their mean.
