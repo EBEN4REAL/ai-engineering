@@ -5,9 +5,7 @@
       "files": [
         "tiny-gpt/train.py",
         ".vscode/changelists.json",
-        "tiny-gpt/.gitignore",
-        "tiny-gpt/requirements.txt",
-        "transformer-fundamentals/transformer_block.py"
+        "tiny-gpt/inference.py"
       ]
     }
   ],
