@@ -1,6 +1,6 @@
 
 import os
-os.environ["HF_HUB_OFFLINE"] = "1"    # must come before importing sentence_transformers
+# os.environ["HF_HUB_OFFLINE"] = "1"    # must come before importing sentence_transformers
 
 import numpy as np
 from sentence_transformers import SentenceTransformer
