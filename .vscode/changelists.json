@@ -3,9 +3,11 @@
     {
       "name": "Default",
       "files": [
-        "tiny-gpt/train.py",
+        "rag-fundamentals/similarity.py",
         ".vscode/changelists.json",
-        "tiny-gpt/inference.py"
+        "rag-fundamentals/semantic_search.py",
+        "rag-fundamentals/requirements.txt",
+        "rag-fundamentals/.gitignore"
       ]
     }
   ],
