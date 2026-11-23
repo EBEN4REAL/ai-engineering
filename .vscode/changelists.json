@@ -3,11 +3,7 @@
     {
       "name": "Default",
       "files": [
-        "rag-fundamentals/similarity.py",
-        ".vscode/changelists.json",
-        "rag-fundamentals/semantic_search.py",
-        "rag-fundamentals/requirements.txt",
-        "rag-fundamentals/.gitignore"
+        "rag-fundamentals/rag.py"
       ]
     }
   ],
