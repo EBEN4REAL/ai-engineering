@@ -3,7 +3,8 @@
     {
       "name": "Default",
       "files": [
-        "rag-fundamentals/rag.py"
+        "rag-fundamentals/chunking.py",
+        ".vscode/changelists.json"
       ]
     }
   ],
