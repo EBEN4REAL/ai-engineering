@@ -16,6 +16,8 @@ def chunk_text(
     # Normalize whitespace to make splitting predictable.
     text = " ".join(text.split())
 
+    print("Normalized text length:", text, len(text))
+
     if not text:
         return []
 
