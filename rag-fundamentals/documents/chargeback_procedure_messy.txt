@@ -1,0 +1,31 @@
+CHARGEBACK   HANDLING   PROCEDURE
+Acme Payments  ·  Risk Operations          Page 1 of 2
+
+
+A chargeback (also called a dispute) happens when a customer
+asks their bank to reverse a card payment.   The bank removes
+the money from the merchant's balance immediately and opens an
+investi-
+gation.
+
+
+Merchants have	10 days	to respond to a chargeback
+with evidence,   such as:
+	-  proof of delivery
+	-  the customer's signed order or
+	   accepted terms
+	-  records of communication with
+	   the customer
+
+
+If the merchant does not respond within 10 days, the bank
+decides in the customer's favour automatically.
+
+
+
+Acme Payments  ·  Risk Operations          Page 2 of 2
+
+Each chargeback carries a non-refundable fee,   even if the
+merchant wins the dispute.   Merchants whose chargeback rate
+goes above 1% of transactions in a month are placed on a
+monitoring programme and may have their payouts delayed.
