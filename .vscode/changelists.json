@@ -3,8 +3,29 @@
     {
       "name": "Default",
       "files": [
-        "rag-fundamentals/chunking.py",
-        ".vscode/changelists.json"
+        "rag-fundamentals/requirements.txt",
+        "rag-fundamentals/vector_store.py",
+        ".vscode/changelists.json",
+        "rag-fundamentals/ingest.py",
+        "rag-fundamentals/search_db.py",
+        ".DS_Store",
+        "\"rag-fundamentals/documents/COVER LETTER - Roboflow.pdf\"",
+        "rag-fundamentals/documents/Ebenezer_Igbinoba_Roboflow_FullStack_Enterprise_Resume.pdf",
+        "rag-fundamentals/documents/chargeback_procedure_messy.txt",
+        "rag-fundamentals/documents/direct_debit_failures.md",
+        "rag-fundamentals/documents/faq.txt",
+        "rag-fundamentals/documents/gateway_troubleshooting.md",
+        "rag-fundamentals/documents/mandate_management.md",
+        "rag-fundamentals/documents/payment_authentication.txt",
+        "rag-fundamentals/documents/refund_policy.txt",
+        "rag-fundamentals/documents/remote_work_policy.txt",
+        "rag-fundamentals/documents/settlement_cutoff.txt",
+        "rag-fundamentals/documents/api_security_and_webhooks.pdf",
+        "rag-fundamentals/documents/data_protection_policy.pdf",
+        "rag-fundamentals/documents/fraud_prevention_guidelines.pdf",
+        "rag-fundamentals/documents/merchant_onboarding_kyc.pdf",
+        "rag-fundamentals/documents/pricing_and_fees.pdf",
+        "rag-fundamentals/documents/scanned_account_verification_checklist.pdf"
       ]
     }
   ],
