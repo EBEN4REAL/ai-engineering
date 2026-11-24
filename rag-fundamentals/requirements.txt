@@ -2,3 +2,5 @@ sentence-transformers
 numpy
 openai
 python-dotenv
+chromadb
+pymupdf
