@@ -4,7 +4,7 @@ from pathlib import Path
 
 import pymupdf
 
-from chunking import chunk_text
+from chunking import chunk_by_words
 
 from vector_store import (
     BASE_DIR,
@@ -56,10 +56,10 @@ def prepare_chunks(pdf_path: Path):
     )
 
     for page in pages:
-        chunks = chunk_text(
+        chunks = chunk_by_words(
             page["text"],
-            chunk_size=CHUNK_SIZE,
-            overlap=CHUNK_OVERLAP,
+            chunk_size=100,
+            overlap=20,
         )
 
         print("CHUNKS => ", chunks)
