@@ -4,3 +4,4 @@ openai
 python-dotenv
 chromadb
 pymupdf
+rank-bm25==0.2.2
