@@ -43,6 +43,45 @@ def chunk_text(
     return chunks
 
 
+def chunk_by_words(
+    text: str,
+    chunk_size: int = 100,
+    overlap: int = 20,
+) -> list[str]:
+    """
+    Divide text into overlapping word-based chunks.
+
+    chunk_size: Maximum number of words per chunk.
+    overlap: Number of words shared by adjacent chunks.
+    """
+    if chunk_size <= 0:
+        raise ValueError("chunk_size must be positive")
+
+    if not 0 <= overlap < chunk_size:
+        raise ValueError(
+            "overlap must be smaller than chunk_size"
+        )
+
+    words = text.split()
+
+    if not words:
+        return []
+
+    chunks = []
+    step = chunk_size - overlap
+
+    for start in range(0, len(words), step):
+        end = min(start + chunk_size, len(words))
+
+        chunk = " ".join(words[start:end])
+        chunks.append(chunk)
+
+        if end == len(words):
+            break
+
+    return chunks
+
+
 if __name__ == "__main__":
     text = (
         "A direct debit may fail because the customer's "
