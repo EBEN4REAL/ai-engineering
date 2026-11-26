@@ -1,0 +1,115 @@
+{
+  "timestamp": "2026-11-26T02:43:21.612870+00:00",
+  "summary": {
+    "count": 3,
+    "k": 3,
+    "recall_at_k": 1.0,
+    "mrr_at_k": 1.0,
+    "citation_structure_rate": 1,
+    "abstention_accuracy": 1,
+    "faithfulness_judge_rate": 1,
+    "citation_support_judge_rate": 1,
+    "judge_coverage": 1.0,
+    "retrieval_p95_ms": 407.09099999999995,
+    "end_to_end_p95_ms": 4217.9529999999995
+  },
+  "cases": [
+    {
+      "id": "fraud-prevention",
+      "question": "How can I prevent fraud?",
+      "answerable": true,
+      "retrieved_sources": [
+        "fraud_prevention_guidelines.pdf::p1",
+        "fraud_prevention_guidelines.pdf::p1",
+        "fraud_prevention_guidelines.pdf::p2"
+      ],
+      "answer": "To prevent fraud, merchants should take several measures:\n\n1. Keep good records: Maintain proof of delivery and customer communications for at least 18 months. This helps in cases of friendly fraud, where genuine customers dispute charges claiming they didn't authorize the purchase or receive the goods [S1], [S2].\n\n2. Refund policies: Always refund to the original payment method to prevent refund fraud, which occurs when fraudsters pay with a stolen card but request the refund to a different card or bank account [S1].\n\n3. Monitor warning signs: Watch for strong fraud indicators such as a password reset, login from a new device, and a change of payout bank account all happening within 24 hours. In such cases, hold payout account changes for 48 hours and confirm with the customer by phone [S2].\n\n4. Limit information disclosure: When blocking a payment due to suspected fraud, only show a generic message like \"This payment could not be completed\" without revealing the specific fraud reason, as this could help fraudsters adapt their tactics. Support agents must not reveal the reason for blocking even if the customer insists [S1], [S3].\n\n5. Reporting suspected fraud: Merchants should report suspected fraud promptly through designated channels (e.g., the Risk section of their dashboard or a specific fraud email) within 24 hours. Customers noticing unauthorized payments should immediately contact their bank to block the card and then contact payment support [S3].\n\nBy following these practices, merchants can reduce the risk of various types of fraud effectively.",
+      "recall_at_k": 1.0,
+      "rr_at_k": 1.0,
+      "citation_structure_pass": true,
+      "citation_details": {
+        "cited": [
+          1,
+          2,
+          1,
+          2,
+          1,
+          3,
+          3
+        ],
+        "invalid": [],
+        "valid": true
+      },
+      "abstention_correct": true,
+      "retrieval_ms": 443.9,
+      "generation_ms": 4073.6,
+      "end_to_end_ms": 4517.5,
+      "faithfulness_judgment": {
+        "supported": true,
+        "citations_support_claims": true,
+        "explanation": "The answer summarizes and compiles preventive measures against fraud exactly as detailed in the provided passages [S1], [S2], and [S3]. Each point corresponds directly to the guidelines mentioned: maintaining records for 18 months (S1, S2), refunding only to the original payment method (S1), monitoring warning signs like rapid password resets and payout changes with confirmation holds (S2), restricting information disclosure on payment blocks (S1, S3), and reporting suspected fraud promptly while instructing customers to block cards and notify support (S3). The citations align correctly with the claims made, and no unsupported claims are introduced."
+      },
+      "judge_error": null
+    },
+    {
+      "id": "Reporting-fraud",
+      "question": "How can I report suspected fraud?",
+      "answerable": true,
+      "retrieved_sources": [
+        "fraud_prevention_guidelines.pdf::p2",
+        "fraud_prevention_guidelines.pdf::p1",
+        "fraud_prevention_guidelines.pdf::p1"
+      ],
+      "answer": "To report suspected fraud, merchants should use the Risk section of the dashboard or email fraud@acmepayments.example within 24 hours of noticing the suspicious activity. Customers who notice a payment they do not recognize should immediately contact their bank to block their card and then contact Acme Payments support [S1].",
+      "recall_at_k": 1.0,
+      "rr_at_k": 1.0,
+      "citation_structure_pass": true,
+      "citation_details": {
+        "cited": [
+          1
+        ],
+        "invalid": [],
+        "valid": true
+      },
+      "abstention_correct": true,
+      "retrieval_ms": 75.81,
+      "generation_ms": 1173.65,
+      "end_to_end_ms": 1249.45,
+      "faithfulness_judgment": {
+        "supported": true,
+        "citations_support_claims": true,
+        "explanation": "The answer matches the guidance given in passage [S1], which explicitly states that merchants should report suspected fraud through the Risk section of the dashboard or by emailing fraud@acmepayments.example within 24 hours. It also correctly advises that customers noticing an unrecognized payment should first contact their bank to block their card and then contact Acme Payments support. The other passages do not contradict or add to this reporting method, and the cited passage [S1] fully supports the claims made in the answer."
+      },
+      "judge_error": null
+    },
+    {
+      "id": "Cryptocurrency-withdrawals",
+      "question": "What is our policy for cryptocurrency withdrawals?",
+      "answerable": false,
+      "retrieved_sources": [
+        "merchant_onboarding_kyc.pdf::p2",
+        "fraud_prevention_guidelines.pdf::p1",
+        "data_protection_policy.pdf::p1"
+      ],
+      "answer": "INSUFFICIENT_EVIDENCE: The retrieved documents do not provide information regarding the policy for cryptocurrency withdrawals. None of the passages mention cryptocurrency withdrawals or related procedures.",
+      "recall_at_k": null,
+      "rr_at_k": null,
+      "citation_structure_pass": true,
+      "citation_details": {
+        "cited": [],
+        "invalid": [],
+        "valid": true
+      },
+      "abstention_correct": true,
+      "retrieval_ms": 48.94,
+      "generation_ms": 1473.09,
+      "end_to_end_ms": 1522.03,
+      "faithfulness_judgment": {
+        "supported": true,
+        "citations_support_claims": true,
+        "explanation": "The provided passages do not contain any information regarding cryptocurrency withdrawals or the policies related to them. Passage [S1] mentions that Acme Payments does not onboard businesses that exchange cryptocurrency without a valid licence, but it does not discuss withdrawal policies. Passages [S2] and [S3] focus on fraud prevention and data protection, respectively, without touching on cryptocurrency withdrawal policies. Therefore, the answer that indicates insufficient evidence is fully supported by the passages, and the citations correctly correspond to the claims."
+      },
+      "judge_error": null
+    }
+  ]
+}
