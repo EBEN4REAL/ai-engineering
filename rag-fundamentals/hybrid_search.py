@@ -258,7 +258,44 @@ class PassageReranker:
 
 
 # -----------------------------------
-# 6. Display results
+# 6. Full pipeline, reusable from other files
+# -----------------------------------
+class HybridRetriever:
+    """Hybrid search + reranking in one object.
+
+    Creating it loads every chunk, builds the BM25 index and
+    loads the cross-encoder, which takes a few seconds.
+    Create it ONCE, then call .search() for every query.
+    """
+
+    def __init__(self):
+        documents = load_documents()
+
+        if not documents:
+            raise ValueError(
+                "No documents found. Run ingest.py first."
+            )
+
+        self.document_count = len(documents)
+        self.bm25_engine = BM25Search(documents)
+        self.reranker = PassageReranker()
+
+    def search(
+        self,
+        query: str,
+        top_k: int = FINAL_TOP_K,
+    ) -> list[dict]:
+        # Stage 1: cast a wide net (recall).
+        candidates = hybrid_search(query, self.bm25_engine)
+
+        # Stage 2: score precisely, keep the best (precision).
+        return self.reranker.rerank(
+            query, candidates, top_k=top_k
+        )
+
+
+# -----------------------------------
+# 7. Display results
 # -----------------------------------
 def print_results(results: list[dict]) -> None:
     for rank, result in enumerate(results, start=1):
@@ -284,22 +321,17 @@ def print_results(results: list[dict]) -> None:
 
 
 # -----------------------------------
-# 7. Interactive application
+# 8. Interactive application
 # -----------------------------------
 def main() -> None:
-    documents = load_documents()
-
-    if not documents:
-        raise SystemExit(
-            "No documents found. Run ingest.py first."
-        )
-
-    # Build both expensive components ONCE, before the loop.
-    bm25_engine = BM25Search(documents)
-    reranker = PassageReranker()
+    # Build the expensive pipeline ONCE, before the loop.
+    try:
+        retriever = HybridRetriever()
+    except ValueError as error:
+        raise SystemExit(str(error))
 
     print("Advanced Hybrid Search")
-    print("Indexed chunks:", len(documents))
+    print("Indexed chunks:", retriever.document_count)
     print("Type 'exit' to quit.")
 
     while True:
@@ -311,11 +343,7 @@ def main() -> None:
         if not query:
             continue
 
-        # Stage 1: cast a wide net (recall).
-        candidates = hybrid_search(query, bm25_engine)
-
-        # Stage 2: score precisely, keep the best (precision).
-        results = reranker.rerank(query, candidates)
+        results = retriever.search(query)
 
         print_results(results)
 
