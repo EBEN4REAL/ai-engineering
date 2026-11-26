@@ -19,6 +19,7 @@ from pathlib import Path
 PROJECT_ROOT = Path(__file__).resolve().parent.parent
 sys.path.insert(0, str(PROJECT_ROOT))
 
+from hybrid_search import HybridRetriever
 from search_db import search_documents
 from rag_persistent import answer_question
 
@@ -117,11 +118,13 @@ def average_defined(values):
     return statistics.mean(values) if values else None
 
 
-def run(cases: list[dict], k: int, use_judge: bool) -> dict:
+def run(cases: list[dict], k: int, use_judge: bool, retrieve=search_documents) -> dict:
+    # retrieve: any function called as retrieve(question, top_k=k)
+    # that returns ranked matches (semantic or hybrid).
     results = []
     for case in cases:
         start = time.perf_counter()
-        matches = search_documents(case["question"], top_k=k)
+        matches = retrieve(case["question"], top_k=k)
         retrieval_ms = (time.perf_counter() - start) * 1000
 
         generation_start = time.perf_counter()
@@ -218,6 +221,7 @@ def main():
     parser.add_argument("--judge", action="store_true")
     parser.add_argument("--baseline")
     parser.add_argument("--out", default="reports/latest.json")
+    parser.add_argument("--retriever", choices=["semantic", "hybrid"], default="semantic")
     args = parser.parse_args()
     if args.k <= 0:
         parser.error("--k must be positive")
@@ -229,7 +233,14 @@ def main():
             parser.error(f"Answerable case {case['id']} needs relevance labels")
         if not case["answerable"] and case["relevant_sources"]:
             parser.error(f"Unanswerable case {case['id']} should have no relevant sources")
-    report = run(cases, args.k, args.judge)
+    if args.retriever == "hybrid":
+        # Build BEFORE run() so loading the BM25 index and reranker
+        # model isn't counted in the first question's retrieval time.
+        retrieve = HybridRetriever().search
+    else:
+        retrieve = search_documents
+    report = run(cases, args.k, args.judge, retrieve)
+    report["summary"]["retriever"] = args.retriever
     path = Path(args.out)
     path.parent.mkdir(parents=True, exist_ok=True)
     path.write_text(json.dumps(report, indent=2), encoding="utf-8")
@@ -241,6 +252,8 @@ def main():
             parser.error("Baseline and current k must match")
         if {x["id"] for x in baseline["cases"]} != {x["id"] for x in report["cases"]}:
             parser.error("Baseline and current test-case IDs must match")
+        print(f"Comparing {args.retriever} against baseline "
+              f"({baseline['summary'].get('retriever', 'semantic')})")
         failures = check_regression(report, baseline)
         if failures:
             for failure in failures:
