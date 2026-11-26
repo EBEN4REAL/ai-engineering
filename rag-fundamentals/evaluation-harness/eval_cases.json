@@ -1,0 +1,20 @@
+[
+  {
+    "id": "fraud-prevention",
+    "question": "How can I prevent fraud?",
+    "answerable": true,
+    "relevant_sources": ["fraud_prevention_guidelines.pdf::p1"]
+  },
+  {
+    "id": "Reporting-fraud",
+    "question": "How can I report suspected fraud?",
+    "answerable": true,
+    "relevant_sources": ["fraud_prevention_guidelines.pdf::p2"]
+  },
+  {
+    "id": "Cryptocurrency-withdrawals",
+    "question": "What is our policy for cryptocurrency withdrawals?",
+    "answerable": false,
+    "relevant_sources": []
+  }
+]
