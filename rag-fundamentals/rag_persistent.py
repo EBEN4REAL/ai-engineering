@@ -4,6 +4,7 @@ import os
 from dotenv import load_dotenv
 from openai import OpenAI, OpenAIError
 
+from hybrid_search import HybridRetriever
 from search_db import search_documents
 
 
@@ -12,6 +13,31 @@ load_dotenv()
 client = OpenAI(timeout=45.0)
 
 MODEL = os.getenv("OPENAI_MODEL", "gpt-4.1-mini")
+
+# Which retriever finds passages: "hybrid" (semantic + BM25 + reranker)
+# or "semantic" (embeddings only). Override with RAG_RETRIEVER in .env.
+RETRIEVER = os.getenv("RAG_RETRIEVER", "hybrid")
+
+if RETRIEVER not in {"hybrid", "semantic"}:
+    raise ValueError(
+        f"RAG_RETRIEVER must be 'hybrid' or 'semantic', got {RETRIEVER!r}"
+    )
+
+# Created on first use, then reused. Building it loads the reranker
+# model, so files that never retrieve (or use "semantic") skip that cost.
+_hybrid_retriever = None
+
+
+def retrieve(question: str, top_k: int = 3) -> list[dict]:
+    global _hybrid_retriever  # we assign to the module-level variable
+
+    if RETRIEVER == "semantic":
+        return search_documents(question, top_k=top_k)
+
+    if _hybrid_retriever is None:
+        _hybrid_retriever = HybridRetriever()
+
+    return _hybrid_retriever.search(question, top_k=top_k)
 
 
 RAG_INSTRUCTIONS = """
@@ -36,7 +62,7 @@ def build_context(matches):
 def answer_question(question: str, matches=None):
     # STEP 1: Retrieve previously indexed passages.
     if matches is None:
-        matches = search_documents(question, top_k=3)
+        matches = retrieve(question, top_k=3)
 
     if not matches:
         return {
@@ -70,6 +96,7 @@ def answer_question(question: str, matches=None):
 
 if __name__ == "__main__":
     print("Persistent PDF RAG Assistant")
+    print("Retriever:", RETRIEVER)
     print("Type 'exit' to quit.")
 
     while True:
@@ -90,11 +117,24 @@ if __name__ == "__main__":
             print("\nRetrieved passages:")
 
             for source in result["sources"]:
+                # Hybrid results may lack "distance" (found by BM25
+                # only), so show whichever scores are present.
+                scores = []
+
+                if "rerank_score" in source:
+                    scores.append(
+                        f"rerank: {source['rerank_score']:.2f}"
+                    )
+
+                if "distance" in source:
+                    scores.append(
+                        f"distance: {source['distance']:.4f}"
+                    )
+
                 print(
                     f"- {source['source']}, "
                     f"page {source['page']} "
-                    f"(distance: "
-                    f"{source['distance']:.4f})"
+                    f"({', '.join(scores)})"
                 )
 
         except OpenAIError as error:
