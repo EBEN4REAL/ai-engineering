@@ -2,10 +2,7 @@
   "changelists": [
     {
       "name": "Default",
-      "files": [
-        "rag-fundamentals/retrieval_metrics.py",
-        ".vscode/changelists.json"
-      ]
+      "files": []
     }
   ],
   "active": "Default"
